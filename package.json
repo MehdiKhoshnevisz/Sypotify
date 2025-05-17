@@ -2,7 +2,7 @@
   "name": "sypotify",
   "version": "1.0.0",
   "description": "a Telegram bot that keeps your music in sync between your Telegram channel and Spotify playlist.",
-  "main": "index.js",
+  "main": "./app/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/MehdiKhoshnevisz/Sypotify/issues"
   },
-  "homepage": "https://github.com/MehdiKhoshnevisz/Sypotify#readme"
+  "homepage": "https://github.com/MehdiKhoshnevisz/Sypotify#readme",
+  "dependencies": {
+    "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "node-telegram-bot-api": "^0.66.0"
+  }
 }
