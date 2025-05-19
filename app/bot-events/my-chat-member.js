@@ -1,10 +1,11 @@
-const { spotify } = require("../configs");
 const { saveUser } = require("../services/user-service");
 const {
-  botIsNotAdminText,
   botIsAdminText,
+  botIsNotAdminText,
   connectToSpotifyText,
 } = require("../data/texts");
+const { USER_STEPS } = require("../constants");
+const { spotifyAuthURL } = require("../configs");
 
 const myChatMember = async (bot, msg) => {
   const user = msg.from;
@@ -36,9 +37,11 @@ const myChatMember = async (bot, msg) => {
         },
       });
 
+      console.log({ msg });
+
       saveUser(userId, {
         ...user,
-        step: "channel_verified",
+        step: USER_STEPS.CHANNEL_VERIFIED,
         channel: {
           id: chatId,
           title: msg.forward_from_chat.title,

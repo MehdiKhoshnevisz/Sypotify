@@ -1,4 +1,5 @@
 const app = require("./index");
+const routes = require("./routes");
 const bot = require("./bot");
 
 const PORT = process.env.PORT || 8888;

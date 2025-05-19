@@ -2,4 +2,4 @@ const getAuthHeaders = (token) => ({
   Authorization: `Bearer ${token}`,
 });
 
-export { getAuthHeaders };
+module.exports = { getAuthHeaders };

@@ -1,3 +1,4 @@
-const app = require("./index");
+const app = require("../index");
+const authSpotifyController = require("../controllers/auth-spotify-controller");
 
-app.get("/callback", async (req, res) => {});
+app.get("/auth", authSpotifyController);
