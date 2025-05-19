@@ -16,6 +16,11 @@ function saveUsers(users) {
   fs.writeFileSync(dataFile, JSON.stringify(users, null, 2));
 }
 
+function getUsers() {
+  const users = readUsers();
+  return Object.values(users);
+}
+
 function getUser(userId) {
   const users = readUsers();
   return users[userId] || null;
@@ -39,4 +44,6 @@ module.exports = {
   hasUser,
   getUser,
   saveUser,
+  readUsers,
+  getUsers,
 };

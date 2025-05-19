@@ -1,4 +1,3 @@
-const { saveUser } = require("../services/user-service");
 const {
   botIsAdminText,
   botIsNotAdminText,
@@ -6,6 +5,7 @@ const {
 } = require("../data/texts");
 const { USER_STEPS } = require("../constants");
 const { spotifyAuthURL } = require("../configs");
+const { saveUser } = require("../services/user-service");
 
 const myChatMember = async (bot, msg) => {
   const user = msg.from;
@@ -29,22 +29,34 @@ const myChatMember = async (bot, msg) => {
         return;
       }
 
-      await bot.sendMessage(userId, botIsAdminText, {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: connectToSpotifyText, url: spotifyAuthURL(userId) }],
-          ],
-        },
-      });
-
-      console.log({ msg });
+      await bot.sendMessage(
+        userId,
+        botIsAdminText,
+        {
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: connectToSpotifyText, url: spotifyAuthURL(userId) }],
+            ],
+          },
+        }
+        // currentUser?.step === USER_STEPS.SPOTIFY_CONNECTED
+        //   ? {
+        //       reply_markup: {
+        //         inline_keyboard: [
+        //           [{ text: connectToSpotifyText, url: spotifyAuthURL(userId) }],
+        //         ],
+        //       },
+        //     }
+        //   : {}
+      );
 
       saveUser(userId, {
         ...user,
         step: USER_STEPS.CHANNEL_VERIFIED,
         channel: {
           id: chatId,
-          title: msg.forward_from_chat.title,
+          title: msg.chat.title,
+          username: msg.chat.username,
         },
       });
     } catch (err) {
