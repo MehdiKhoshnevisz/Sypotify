@@ -51,5 +51,5 @@ jobs:
             cd ${{ secrets.VPS_PATH }}
             git pull origin main
             npm install
-            pm2 restart all || pm2 start index.js --name sypotify
+            pm2 restart all || pm2 start ./app/server.js --name sypotify
           EOF
