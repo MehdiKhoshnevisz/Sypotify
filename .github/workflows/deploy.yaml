@@ -44,8 +44,12 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+            nvm use 22
+
             cd ${{ secrets.VPS_PATH }}
             git pull origin main
             npm install
-            pm2 restart all
+            pm2 restart all || pm2 start index.js --name sypotify
           EOF
