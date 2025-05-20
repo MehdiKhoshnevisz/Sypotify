@@ -2,56 +2,49 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main # or your deployment branch
+
+env:
+  TELEGRAM_BOT_OWNER_ID: ${{ secrets.TELEGRAM_BOT_OWNER_ID }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  SPOTIFY_API_URL: ${{ secrets.SPOTIFY_API_URL }}
+  SPOTIFY_ACCOUNT_URL: ${{ secrets.SPOTIFY_ACCOUNT_URL }}
+  SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
+  SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+  SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+  SPOTIFY_TOKEN_API_URL: ${{ secrets.SPOTIFY_TOKEN_API_URL }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: "22.15.1"
 
-      - run: npm install
-      - run: npm install -g pm2
+      - name: Install dependencies
+        run: npm install
 
-      - name: SSH & Deploy
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_PATH: ${{ secrets.VPS_PATH }}
+      - name: Install PM2
+        run: npm install -g pm2
 
-          TELEGRAM_BOT_OWNER_ID: ${{ secrets.TELEGRAM_BOT_OWNER_ID }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          SPOTIFY_API_URL: ${{ secrets.SPOTIFY_API_URL }}
-          SPOTIFY_ACCOUNT_URL: ${{ secrets.SPOTIFY_ACCOUNT_URL }}
-          SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
-          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          SPOTIFY_TOKEN_API_URL: ${{ secrets.SPOTIFY_TOKEN_API_URL }}
-
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-          ssh $VPS_USER@$VPS_HOST << EOF
-            cd $VPS_PATH
-
-            echo "TELEGRAM_BOT_OWNER_ID=${TELEGRAM_BOT_OWNER_ID}" >> .env
-            echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
-            echo "SPOTIFY_API_URL=${SPOTIFY_API_URL}" >> .env
-            echo "SPOTIFY_ACCOUNT_URL=${SPOTIFY_ACCOUNT_URL}" >> .env
-            echo "SPOTIFY_REDIRECT_URI=${SPOTIFY_REDIRECT_URI}" >> .env
-            echo "SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}" >> .env
-            echo "SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}" >> .env
-            echo "SPOTIFY_TOKEN_API_URL=${SPOTIFY_TOKEN_API_URL}" >> .env
-
+      - name: Deploy via SSH
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            cd ${{ secrets.VPS_PATH }}
             git pull origin main
             npm install
             pm2 restart all
