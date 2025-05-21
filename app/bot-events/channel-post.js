@@ -22,7 +22,7 @@ const findBestMatch = (title, tracks = []) => {
   return bestMatch ?? null;
 };
 
-const addTrackToPlaylist = async (track) => {
+const addTrackToUserPlaylist = async (track, user) => {
   if (track) {
     const uri = track?.uri;
 
@@ -32,12 +32,16 @@ const addTrackToPlaylist = async (track) => {
       { headers: getAuthHeaders(user?.spotify?.accessToken) }
     );
 
-    bot.sendMessage(user?.id, addedToSpotifyText);
+    (bot) => {
+      bot.sendMessage(user?.id, addedToSpotifyText);
+    };
   } else {
-    bot.sendMessage(
-      user?.id,
-      `❌ No matching track found for title "${title}" and artist similar to "${artist}".`
-    );
+    (bot) => {
+      bot.sendMessage(
+        user?.id,
+        `❌ No matching track found for title "${title}" and artist similar to "${artist}".`
+      );
+    };
   }
 };
 
@@ -61,7 +65,7 @@ const channelPostEvent = async (bot, post) => {
           query,
         });
         const bestMatchTrack = findBestMatch(title, tracks);
-        addTrackToPlaylist(bestMatchTrack);
+        addTrackToUserPlaylist(bestMatchTrack, user)(bot);
       }
     } catch (err) {
       console.error("Error processing post:", err);
