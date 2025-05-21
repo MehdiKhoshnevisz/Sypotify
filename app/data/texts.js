@@ -11,10 +11,13 @@ const botIsAdminText = "✅ ربات با موفقیت به عنوان ادمی�
 
 const connectToSpotifyText = "🔗 اتصال به Spotify";
 
+const addedToSpotifyText = "✅ موزیکت به پلی‌لیست اضافه شد.";
+
 module.exports = {
   botIsAdminText,
   helpCommandText,
   startCommandText,
   botIsNotAdminText,
+  addedToSpotifyText,
   connectToSpotifyText,
 };

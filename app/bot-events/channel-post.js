@@ -1,14 +1,13 @@
-// channel_post
-
 const axios = require("axios");
 const { getAuthHeaders } = require("../helpers");
 const { getUsers } = require("../services/user-service");
+const { addedToSpotifyText } = require("../data/texts");
 
-const searchSong = async ({ accessToken, query }) => {
+const searchTrack = async ({ accessToken, query }) => {
   const res = await axios.get(`${process.env.SPOTIFY_API_URL}/search`, {
     params: {
       q: query,
-      limit: 1,
+      limit: 3,
       type: "track",
     },
     headers: { ...getAuthHeaders(accessToken) },
@@ -16,6 +15,30 @@ const searchSong = async ({ accessToken, query }) => {
 
   const result = res?.data?.tracks?.items || [];
   return result;
+};
+
+const findBestMatch = (title, tracks = []) => {
+  const bestMatch = tracks?.find((track) => track?.name(title));
+  return bestMatch ?? null;
+};
+
+const addTrackToPlaylist = async (track) => {
+  if (track) {
+    const uri = track?.uri;
+
+    await axios.post(
+      `${process.env.SPOTIFY_API_URL}/playlists/${user.playlist.id}/tracks`,
+      { uris: [uri] },
+      { headers: getAuthHeaders(user?.spotify?.accessToken) }
+    );
+
+    bot.sendMessage(user?.id, addedToSpotifyText);
+  } else {
+    bot.sendMessage(
+      user?.id,
+      `❌ No matching track found for title "${title}" and artist similar to "${artist}".`
+    );
+  }
 };
 
 const channelPostEvent = async (bot, post) => {
@@ -33,26 +56,12 @@ const channelPostEvent = async (bot, post) => {
         const title = post.audio.title || "";
         const artist = post.audio.performer || "";
         const query = `${artist} - ${title}`;
-        const songs = await searchSong({
+        const tracks = await searchTrack({
           accessToken: user?.spotify?.accessToken,
           query,
         });
-        const track = songs?.length ? songs[0] : null;
-
-        if (track) {
-          const uri = track?.uri;
-          await axios.post(
-            `${process.env.SPOTIFY_API_URL}/playlists/${user.playlist.id}/tracks`,
-            { uris: [uri] },
-            { headers: getAuthHeaders(user?.spotify?.accessToken) }
-          );
-          bot.sendMessage(user?.id, `✅ موزیکت به پلی‌لیست اضافه شد.`);
-        } else {
-          bot.sendMessage(
-            user?.id,
-            `❌ No matching track found for title "${title}" and artist similar to "${artist}".`
-          );
-        }
+        const bestMatchTrack = findBestMatch(title, tracks);
+        addTrackToPlaylist(bestMatchTrack);
       }
     } catch (err) {
       console.error("Error processing post:", err);
