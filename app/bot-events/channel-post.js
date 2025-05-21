@@ -33,8 +33,9 @@ const findBestMatch = (title, tracks = []) => {
 
   console.log("fuseResult:", fuseResult);
 
-  // const bestMatch = tracks?.find((track) => title?.includes(track?.name));
-  const bestMatch = tracks?.find((track) => track?.name === fuseResult[0]);
+  const bestMatch = tracks?.find(
+    (track) => track?.name === fuseResult?.[0]?.item
+  );
 
   return bestMatch ?? null;
 };
