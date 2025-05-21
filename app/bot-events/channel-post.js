@@ -32,17 +32,17 @@ const addTrackToUserPlaylist = async (track, user) => {
       { headers: getAuthHeaders(user?.spotify?.accessToken) }
     );
 
-    (bot) => {
+    return (bot) => {
       bot.sendMessage(user?.id, addedToSpotifyText);
     };
-  } else {
-    (bot) => {
-      bot.sendMessage(
-        user?.id,
-        `❌ No matching track found for title "${title}" and artist similar to "${artist}".`
-      );
-    };
   }
+
+  return (bot) => {
+    bot.sendMessage(
+      user?.id,
+      `❌ No matching track found for title "${title}" and artist similar to "${artist}".`
+    );
+  };
 };
 
 const channelPostEvent = async (bot, post) => {
