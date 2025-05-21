@@ -18,12 +18,11 @@ const searchTrack = async ({ accessToken, query }) => {
 };
 
 const findBestMatch = (title, tracks = []) => {
-  const bestMatch = tracks?.find((track) => track?.name(title));
+  const bestMatch = tracks?.find((track) => track?.name?.includes(title));
   return bestMatch ?? null;
 };
 
 const addTrackToPlaylist = async (track) => {
-  console.log({ track });
   if (track) {
     const uri = track?.uri;
 
