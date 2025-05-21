@@ -22,7 +22,7 @@ const findBestMatch = (title, tracks = []) => {
   return bestMatch ?? null;
 };
 
-const addTrackToUserPlaylist = async (track, user) => {
+const addTrackToUserPlaylist = async (title, track, user) => {
   if (track) {
     const uri = track?.uri;
 
@@ -38,10 +38,7 @@ const addTrackToUserPlaylist = async (track, user) => {
   }
 
   return (bot) => {
-    bot.sendMessage(
-      user?.id,
-      `❌ No matching track found for title "${title}" and artist similar to "${artist}".`
-    );
+    bot.sendMessage(user?.id, `❌ No matching track found for "${title}".`);
   };
 };
 
@@ -65,7 +62,11 @@ const channelPostEvent = async (bot, post) => {
           query,
         });
         const bestMatchTrack = findBestMatch(title, tracks);
-        const trackHandler = await addTrackToUserPlaylist(bestMatchTrack, user);
+        const trackHandler = await addTrackToUserPlaylist(
+          title,
+          bestMatchTrack,
+          user
+        );
         trackHandler(bot);
       }
     } catch (err) {
