@@ -26,7 +26,7 @@ const findBestMatch = (title, tracks = []) => {
 
   const fuse = new Fuse(titles, {
     includeScore: true,
-    threshold: 0.4, // Adjust for sensitivity, lower = stricter
+    threshold: 0.1, // Adjust for sensitivity, lower = stricter
   });
 
   const fuseResult = fuse.search(title);
