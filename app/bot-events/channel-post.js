@@ -18,7 +18,7 @@ const searchTrack = async ({ accessToken, query }) => {
 };
 
 const findBestMatch = (title, tracks = []) => {
-  const bestMatch = tracks?.find((track) => track?.name?.includes(title));
+  const bestMatch = tracks?.find((track) => title?.includes(track?.name));
   return bestMatch ?? null;
 };
 
