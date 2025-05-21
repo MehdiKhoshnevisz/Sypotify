@@ -23,6 +23,7 @@ const findBestMatch = (title, tracks = []) => {
 };
 
 const addTrackToPlaylist = async (track) => {
+  console.log({ track });
   if (track) {
     const uri = track?.uri;
 
