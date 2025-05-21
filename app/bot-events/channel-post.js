@@ -65,7 +65,8 @@ const channelPostEvent = async (bot, post) => {
           query,
         });
         const bestMatchTrack = findBestMatch(title, tracks);
-        addTrackToUserPlaylist(bestMatchTrack, user)(bot);
+        const trackHandler = await addTrackToUserPlaylist(bestMatchTrack, user);
+        trackHandler(bot);
       }
     } catch (err) {
       console.error("Error processing post:", err);
