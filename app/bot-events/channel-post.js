@@ -1,4 +1,5 @@
 const axios = require("axios");
+const Fuse = require("fuse.js");
 const { getAuthHeaders } = require("../helpers");
 const { getUsers } = require("../services/user-service");
 const { addedToSpotifyText } = require("../data/texts");
@@ -7,7 +8,6 @@ const searchTrack = async ({ accessToken, query }) => {
   const res = await axios.get(`${process.env.SPOTIFY_API_URL}/search`, {
     params: {
       q: query,
-      limit: 3,
       type: "track",
     },
     headers: { ...getAuthHeaders(accessToken) },
@@ -18,7 +18,24 @@ const searchTrack = async ({ accessToken, query }) => {
 };
 
 const findBestMatch = (title, tracks = []) => {
-  const bestMatch = tracks?.find((track) => title?.includes(track?.name));
+  if (!tracks?.length) return null;
+
+  const titles = tracks?.map((track) => track?.name);
+
+  console.log("titles: ", titles);
+
+  const fuse = new Fuse(titles, {
+    includeScore: true,
+    threshold: 0.4, // Adjust for sensitivity, lower = stricter
+  });
+
+  const fuseResult = fuse.search(title);
+
+  console.log("fuseResult:", fuseResult);
+
+  // const bestMatch = tracks?.find((track) => title?.includes(track?.name));
+  const bestMatch = tracks?.find((track) => track?.name === fuseResult[0]);
+
   return bestMatch ?? null;
 };
 
