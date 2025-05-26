@@ -2,7 +2,7 @@ const { USER_STEPS } = require("../constants");
 const { startCommandText, aboutCommandText } = require("../data/texts");
 const { hasUser, saveUser } = require("../services/user-service");
 
-const aboutCommand = () => {
+const aboutCommand = (bot, msg) => {
   bot.sendMessage(msg.chat.id, aboutCommandText);
 };
 
