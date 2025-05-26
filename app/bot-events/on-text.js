@@ -1,5 +1,10 @@
+const { spotifyAuthURL } = require("../configs");
 const { USER_STEPS } = require("../constants");
-const { startCommandText, aboutCommandText } = require("../data/texts");
+const {
+  startCommandText,
+  aboutCommandText,
+  connectToSpotifyText,
+} = require("../data/texts");
 const { hasUser, saveUser, getUser } = require("../services/user-service");
 
 const aboutCommand = (bot, msg) => {
@@ -28,7 +33,24 @@ const statusCommand = (bot, msg) => {
         currentUser?.playlist?.id
           ? `🎧 پلی‌لیست انتخابی: ${currentUser?.playlist?.name}`
           : ""
-      }`
+      }`,
+      {
+        reply_markup: {
+          inline_keyboard: [
+            !currentUser?.channel?.id
+              ? [
+                  {
+                    text: "افزودن بات به کانال",
+                    url: "https://t.me/share/url?url=https://t.me/sypotify_bot",
+                  },
+                ]
+              : [],
+            !currentUser?.spotify?.accessToken
+              ? [{ text: connectToSpotifyText, url: spotifyAuthURL(userId) }]
+              : [],
+          ],
+        },
+      }
     );
   }
 };
