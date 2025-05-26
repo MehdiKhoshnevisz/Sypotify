@@ -1,9 +1,40 @@
 const { USER_STEPS } = require("../constants");
 const { startCommandText, aboutCommandText } = require("../data/texts");
-const { hasUser, saveUser } = require("../services/user-service");
+const { hasUser, saveUser, getUser } = require("../services/user-service");
 
 const aboutCommand = (bot, msg) => {
   bot.sendMessage(msg.chat.id, aboutCommandText);
+};
+
+const statusCommand = (bot, msg) => {
+  const user = msg.from;
+  const { id: userId } = user;
+  const isExistUser = hasUser(userId);
+
+  if (isExistUser) {
+    const currentUser = getUser(userId);
+
+    bot.sendMessage(
+      userId,
+      `
+      ${
+        currentUser?.channel?.id
+          ? `✅ بات در کانال ${currentUser?.channel?.title} ادمین هست.`
+          : "❌ بات به عنوان ادمین در کانال هنوز اضافه نشده!"
+      }\n
+      ${
+        currentUser?.spotify?.accessToken
+          ? "✅ به اسپاتیفای وصل هستی"
+          : "❌ به اسپاتیفای هنوز وصل نشدی!"
+      }\n
+      ${
+        currentUser?.playlist?.id
+          ? `پلی‌لیست انتخابی: ${currentUser?.playlist?.title}`
+          : ""
+      }
+      `
+    );
+  }
 };
 
 const startCommand = (bot, msg) => {
@@ -28,6 +59,7 @@ const startCommand = (bot, msg) => {
 
 const onText = (bot) => {
   bot.onText(/\/start/, (msg) => startCommand(bot, msg));
+  bot.onText(/\/status/, (msg) => statusCommand(bot, msg));
   bot.onText(/\/about/, (msg) => aboutCommand(bot, msg));
 };
 
