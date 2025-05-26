@@ -1,9 +1,9 @@
 const { USER_STEPS } = require("../constants");
-const { startCommandText, helpCommandText } = require("../data/texts");
+const { startCommandText, aboutCommandText } = require("../data/texts");
 const { hasUser, saveUser } = require("../services/user-service");
 
-const helpCommand = (bot, msg) => {
-  bot.sendMessage(msg.chat.id, helpCommandText);
+const aboutCommand = () => {
+  bot.sendMessage(msg.chat.id, aboutCommandText);
 };
 
 const startCommand = (bot, msg) => {
@@ -28,7 +28,7 @@ const startCommand = (bot, msg) => {
 
 const onText = (bot) => {
   bot.onText(/\/start/, (msg) => startCommand(bot, msg));
-  bot.onText(/\/help/, (msg) => helpCommand(bot, msg));
+  bot.onText(/\/about/, (msg) => aboutCommand(bot, msg));
 };
 
 module.exports = onText;
