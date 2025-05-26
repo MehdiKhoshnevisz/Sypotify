@@ -16,8 +16,7 @@ const statusCommand = (bot, msg) => {
 
     bot.sendMessage(
       userId,
-      `
-      ${
+      `${
         currentUser?.channel?.id
           ? `✅ بات در کانال ${currentUser?.channel?.title} ادمین هست.`
           : "❌ بات به عنوان ادمین در کانال هنوز اضافه نشده!"
@@ -29,7 +28,7 @@ const statusCommand = (bot, msg) => {
       }\n
       ${
         currentUser?.playlist?.id
-          ? `پلی‌لیست انتخابی: ${currentUser?.playlist?.title}`
+          ? `🎵 پلی‌لیست انتخابی: ${currentUser?.playlist?.name}`
           : ""
       }
       `
